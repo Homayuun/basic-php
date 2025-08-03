@@ -17,11 +17,16 @@ cd my-project
 
 4. Change "container_name," "ports," and "network" in "docker-compose.yml" according to the new project settings.
 
-5. Bring up the container:
+5. Create Docker Network if needed:
+```bash
+docker network create [docker-network-name-for-my-project]
+```
+
+6. Bring up the container:
 ```bash
 docker compose up -d
 ```
 
-6. Put your code into the "src" directory.
+7. Put your code into the "src" directory.
 
-7. Navigate to "localhost:[selected-port-in-docker-compose.yml]" to access your application.
+8. Navigate to "localhost:[selected-port-in-docker-compose.yml]" to access your application.
