@@ -1,0 +1,31 @@
+services:
+  php81-dev-environment:
+    container_name: php81_dev_environment
+    ports:
+      - 8000:80
+    build: .
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - php81_dev_environment_network
+
+  php81-dev-environment-database:
+    image: mariadb:10.6.20-focal
+    container_name: php81_dev_environment_database
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - 8100:3306
+    volumes:
+      - ./init/:/docker-entrypoint-initdb.d/
+      - ./db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: php81_dev_environment
+    networks:
+      - php81_dev_environment_network
+
+networks:
+  php81_dev_environment_network:
+    name: php81_dev_environment_network
+    driver: bridge
+    external: true
