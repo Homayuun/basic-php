@@ -2,23 +2,37 @@
 include 'auth.php';
 include 'connect.php';
 
+function getTotalNotes($connection) {
+    $result = $connection->query("SELECT COUNT(*) AS total FROM NotesTable");
+    return $result ? intval($result->fetch_assoc()['total']) : 0;
+}
+
+function getNotes($connection, $offset, $limit) {
+    $notes = [];
+    $sql = "SELECT * FROM NotesTable ORDER BY created_at DESC LIMIT ? OFFSET ?";
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result && $result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row;
+        }
+    }
+
+    return $notes;
+}
+
 $notesPerPage = 5;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $notesPerPage;
 
-$totalNotesResult = $connection->query("SELECT COUNT(*) AS total FROM NotesTable");
-$totalNotes = $totalNotesResult->fetch_assoc()['total'];
+$totalNotes = getTotalNotes($connection);
 $totalPages = ceil($totalNotes / $notesPerPage);
 
-$getAllNotesSQL = "SELECT * FROM NotesTable ORDER BY created_at DESC LIMIT $notesPerPage OFFSET $offset";
-$getAllNotesResult = $connection->query($getAllNotesSQL);
+$notes = getNotes($connection, $offset, $notesPerPage);
 
-$notes = [];
-if ($getAllNotesResult && $getAllNotesResult->num_rows > 0) {
-    while ($row = $getAllNotesResult->fetch_assoc()) {
-        $notes[] = $row;
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +52,7 @@ if ($getAllNotesResult && $getAllNotesResult->num_rows > 0) {
         </div>
     </div>
 
-    <a href="create.php" class="btn btn-secondary mb-3">Add a new note</a>
+    <a href="create.php" class="btn btn-primary mb-3">Add a new note</a>
 
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
