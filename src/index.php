@@ -24,20 +24,24 @@ if ($getAllNotesResult && $getAllNotesResult->num_rows > 0) {
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Notes List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+<body class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <h1>Notes</h1>
         <div>
             Logged in as: <?= htmlspecialchars($_SESSION['username']); ?> |
-            <a href="logout.php" style="color: red; text-decoration: none;">Logout</a>
+            <a href="logout.php" class="text-danger text-decoration-none">Logout</a>
         </div>
     </div>
 
-    <a href="create.php" style="color: blue; text-decoration: none;">Add a new note</a><br><br>
-    <table border="1" cellpadding="10">
-        <thead>
+    <a href="create.php" class="btn btn-secondary mb-3">Add a new note</a>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
             <tr>
                 <th>Title</th>
                 <th>Content</th>
@@ -53,26 +57,25 @@ if ($getAllNotesResult && $getAllNotesResult->num_rows > 0) {
                         <td><?= nl2br(htmlspecialchars($note['content'])) ?></td>
                         <td><?= $note['created_at'] ?></td>
                         <td>
-                            <a href="delete.php?id=<?= $note['id'] ?>" onclick="return confirm('Are you sure?')">Delete</a>
-                            <a href="edit.php?id=<?= $note['id'] ?>">Edit</a>
+                            <a href="edit.php?id=<?= $note['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="delete.php?id=<?= $note['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
-                <tr><td colspan="4">No notes found.</td></tr>
+                <tr><td colspan="4" class="text-center">No notes found.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>
 
-    <div style="margin-top: 10px;">
-        <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-            <?php if ($p == $page): ?>
-                <strong><?= $p ?></strong>
-            <?php else: ?>
-                <a href="?page=<?= $p ?>"><?= $p ?></a>
-            <?php endif; ?>
-            <?= ($p < $totalPages) ? ' | ' : '' ?>
-        <?php endfor; ?>
-    </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                <li class="page-item <?= ($p == $page) ? 'active' : '' ?>">
+                    <a class="page-link" href="?page=<?= $p ?>"><?= $p ?></a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
 </body>
 </html>
