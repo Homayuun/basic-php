@@ -18,27 +18,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "Error: " . $connection->error;
         }
     } else {
-        echo "Title and content are required.";
+        $error = "Title and content are required.";
     }
 }
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add a note</title>
+    <meta charset="UTF-8">
+    <title>Add Note</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Add a note</h1>
-    <form method="post" action="">
-        <label>Title:</label><br>
-        <input type="text" name="title" required style="border: 1px solid black;"><br><br>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded shadow w-full max-w-md">
+        <h1 class="text-xl font-bold mb-4">Add Note</h1>
 
-        <label> Content:</label><br>
-        <textarea name="content" rows="5" cols="30" required></textarea><br><br>
+        <?php if (!empty($error)): ?>
+            <p class="text-red-500 mb-3"><?= $error ?></p>
+        <?php endif; ?>
 
-        <button type="submit">Save</button>
-    </form>
-    <br>
-    <a href="index.php">Back to list</a>
+        <form method="post" class="space-y-3">
+            <div>
+                <label class="block mb-1">Title:</label>
+                <input type="text" name="title" required
+                       class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300">
+            </div>
+
+            <div>
+                <label class="block mb-1">Content:</label>
+                <textarea name="content" rows="5" required
+                          class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300"></textarea>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                    Save
+                </button>
+                <a href="index.php" class="text-blue-500 hover:underline">Back</a>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
