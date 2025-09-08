@@ -32,19 +32,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Login</h1>
-    <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
-    <form method="post" action="">
-        <label>Username:</label><br>
-        <input type="text" name="username" required><br><br>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded shadow w-full max-w-sm">
+        <h1 class="text-xl font-bold mb-4 text-center">Login</h1>
 
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
+        <?php if (!empty($error)): ?>
+            <p class="text-red-500 mb-3"><?= $error ?></p>
+        <?php endif; ?>
 
-        <button type="submit">Login</button>
-    </form>
+        <form method="post" class="space-y-3">
+            <div>
+                <label class="block mb-1">Username:</label>
+                <input type="text" name="username" required
+                       class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300">
+            </div>
+
+            <div>
+                <label class="block mb-1">Password:</label>
+                <input type="password" name="password" required
+                       class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300">
+            </div>
+
+            <button type="submit" class="w-full bg-blue-500 text-white py-1 rounded hover:bg-blue-600">
+                Login
+            </button>
+        </form>
+    </div>
 </body>
 </html>
