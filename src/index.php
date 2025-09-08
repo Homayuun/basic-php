@@ -1,4 +1,5 @@
 <?php
+include 'auth.php';
 include 'connect.php';
 
 $notesPerPage = 5;
@@ -26,7 +27,14 @@ if ($getAllNotesResult && $getAllNotesResult->num_rows > 0) {
     <title>Notes List</title>
 </head>
 <body>
-    <h1>Notes</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Notes</h1>
+        <div>
+            Logged in as: <?= htmlspecialchars($_SESSION['username']); ?> |
+            <a href="logout.php" style="color: red; text-decoration: none;">Logout</a>
+        </div>
+    </div>
+
     <a href="create.php" style="color: blue; text-decoration: none;">Add a new note</a><br><br>
     <table border="1" cellpadding="10">
         <thead>
