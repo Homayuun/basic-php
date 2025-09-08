@@ -51,14 +51,18 @@ if (!$note) { die("Note not found"); }
         <form method="post" class="space-y-3">
             <div>
                 <label class="block mb-1">Title:</label>
-                <input type="text" name="title" value="<?= htmlspecialchars($note['title']) ?>" required
-                       class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300">
+                <input 
+                type="text" name="title" value="<?= htmlspecialchars($note['title']) ?>" 
+                required class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300"
+                >
             </div>
 
             <div>
                 <label class="block mb-1">Content:</label>
-                <textarea name="content" rows="5" required
-                          class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300"><?= htmlspecialchars($note['content']) ?></textarea>
+                <textarea 
+                name="content" rows="5" required
+                class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300"><?= htmlspecialchars($note['content']) 
+                ?></textarea>
             </div>
 
             <div class="flex justify-between items-center">
