@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'connect.php';
+include 'install.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
@@ -30,36 +31,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-6 rounded shadow w-full max-w-sm">
-        <h1 class="text-xl font-bold mb-4 text-center">Login</h1>
+<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+    <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+        <h1 class="h4 text-center mb-4">Login</h1>
 
         <?php if (!empty($error)): ?>
-            <p class="text-red-500 mb-3"><?= $error ?></p>
+            <div class="alert alert-danger"><?= $error ?></div>
         <?php endif; ?>
 
-        <form method="post" class="space-y-3">
-            <div>
-                <label class="block mb-1">Username:</label>
-                <input type="text" name="username" required
-                       class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" required class="form-control">
             </div>
 
-            <div>
-                <label class="block mb-1">Password:</label>
-                <input type="password" name="password" required
-                       class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300">
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" required class="form-control">
             </div>
 
-            <button type="submit" class="w-full bg-blue-500 text-white py-1 rounded hover:bg-blue-600">
-                Login
-            </button>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
         </form>
     </div>
 </body>

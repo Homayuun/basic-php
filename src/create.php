@@ -22,41 +22,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Add Note</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-6 rounded shadow w-full max-w-md">
-        <h1 class="text-xl font-bold mb-4">Add Note</h1>
+<body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card shadow p-4 w-100" style="max-width: 500px;">
+        <h1 class="h4 mb-4 text-center fw-bold">Add Note</h1>
 
         <?php if (!empty($error)): ?>
-            <p class="text-red-500 mb-3"><?= $error ?></p>
+            <div class="alert alert-danger"><?= $error ?></div>
         <?php endif; ?>
 
-        <form method="post" class="space-y-3">
-            <div>
-                <label class="block mb-1">Title:</label>
-                <input type="text" name="title" required
-                       class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Title:</label>
+                <input type="text" name="title" required class="form-control">
             </div>
 
-            <div>
-                <label class="block mb-1">Content:</label>
-                <textarea name="content" rows="5" required
-                          class="w-full border px-2 py-1 rounded focus:ring focus:ring-blue-300"></textarea>
+            <div class="mb-3">
+                <label class="form-label">Content:</label>
+                <textarea name="content" rows="5" required class="form-control"></textarea>
             </div>
 
-            <div class="flex justify-between items-center">
-                <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
-                    Save
-                </button>
-                <a href="index.php" class="text-blue-500 hover:underline">Back</a>
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="index.php" class="btn btn-link">Back</a>
             </div>
         </form>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
