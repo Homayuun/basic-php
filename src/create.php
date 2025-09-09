@@ -7,9 +7,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = trim($_POST['content']);
 
     if (!empty($title) && !empty($content)) {
-        $insertNoteSQL = "INSERT INTO NotesTable (title, content) VALUES (?, ?)";
+        $insertNoteSQL = "INSERT INTO NotesTable (title, content, user_id) VALUES (?, ?, ?)";
         $statement = $connection->prepare($insertNoteSQL);
-        $statement->bind_param("ss", $title, $content);
+        $statement->bind_param("ssi", $title, $content, $currentUserId);
 
         if ($statement->execute()) {
             header("Location: index.php");
@@ -28,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Add Note</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light d-flex align-items-center justify-content-center min-vh-100">
@@ -56,8 +55,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </form>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
