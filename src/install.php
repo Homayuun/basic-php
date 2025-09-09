@@ -18,6 +18,7 @@ $queries = [
         `content` text DEFAULT NULL,
         `created_at` datetime NOT NULL DEFAULT current_timestamp(),
         PRIMARY KEY (`id`),
+        UNIQUE KEY user_title_unique (`user_id`, `title`),
         FOREIGN KEY (`user_id`) REFERENCES `UsersTable`(`id`) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
 ];
@@ -55,7 +56,8 @@ $insertNotes = "INSERT INTO NotesTable (user_id, title, content) VALUES
 ($user_id, 'title 7', 'content 7'),
 ($user_id, 'title 8', 'content 8'),
 ($user_id, 'title 9', 'content 9'),
-($user_id, 'title 10', 'content 10')";
+($user_id, 'title 10', 'content 10')
+ON DUPLICATE KEY UPDATE content = VALUES(content), created_at = CURRENT_TIMESTAMP";
 
 if (!$connection -> query($insertUser)) {
     echo "Error inserting default user: " . $connection->error . "<br>";
