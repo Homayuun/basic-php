@@ -2,16 +2,19 @@
 include 'auth.php';
 include 'connect.php';
 
-function getTotalNotes($connection) {
-    $result = $connection->query("SELECT COUNT(*) AS total FROM NotesTable");
+function getTotalNotes($connection, $userId) {
+    $stmt = $connection->prepare("SELECT COUNT(*) AS total FROM NotesTable WHERE user_id = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
     return $result ? intval($result->fetch_assoc()['total']) : 0;
 }
 
-function getNotes($connection, $offset, $limit) {
+function getNotes($connection, $userId, $limit, $offset) {
     $notes = [];
-    $sql = "SELECT * FROM NotesTable ORDER BY created_at DESC LIMIT ? OFFSET ?";
+    $sql = "SELECT * FROM NotesTable WHERE user_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
     $stmt = $connection->prepare($sql);
-    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->bind_param("iii", $userId, $limit, $offset);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -28,11 +31,10 @@ $notesPerPage = 5;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $notesPerPage;
 
-$totalNotes = getTotalNotes($connection);
+$totalNotes = getTotalNotes($connection, $currentUserId);
 $totalPages = ceil($totalNotes / $notesPerPage);
 
-$notes = getNotes($connection, $offset, $notesPerPage);
-
+$notes = getNotes($connection, $currentUserId, $notesPerPage, $offset);
 ?>
 
 <!DOCTYPE html>
@@ -83,13 +85,35 @@ $notes = getNotes($connection, $offset, $notesPerPage);
     </table>
 
     <nav aria-label="Page navigation">
-        <ul class="pagination">
-            <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-                <li class="page-item <?= ($p == $page) ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=<?= $p ?>"><?= $p ?></a>
-                </li>
-            <?php endfor; ?>
-        </ul>
-    </nav>
+    <ul class="pagination">
+        <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+            <a class="page-link" href="?page=<?= max(1, $page - 1) ?>">&laquo;</a>
+        </li>
+
+        <?php if ($page > 3): ?>
+            <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+            <?php if ($page > 4): ?>
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+            <?php endif; ?>
+        <?php endif; ?>
+
+        <?php for ($p = max(1, $page - 2); $p <= min($totalPages, $page + 2); $p++): ?>
+            <li class="page-item <?= ($p == $page) ? 'active' : '' ?>">
+                <a class="page-link" href="?page=<?= $p ?>"><?= $p ?></a>
+            </li>
+        <?php endfor; ?>
+
+        <?php if ($page < $totalPages - 2): ?>
+            <?php if ($page < $totalPages - 3): ?>
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+            <?php endif; ?>
+            <li class="page-item"><a class="page-link" href="?page=<?= $totalPages ?>"><?= $totalPages ?></a></li>
+        <?php endif; ?>
+
+        <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
+            <a class="page-link" href="?page=<?= min($totalPages, $page + 1) ?>">&raquo;</a>
+        </li>
+    </ul>
+</nav>
 </body>
 </html>
