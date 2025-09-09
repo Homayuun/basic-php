@@ -15,8 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("ssi", $title, $content, $id);
 
         if ($stmt->execute()) {
-            header("Location: index.php");
-            exit;
+            exit("OK"); // tell AJAX it's done
         } else {
             die("Error updating: " . $connection->error);
         }
@@ -33,48 +32,31 @@ $note = $stmt->get_result()->fetch_assoc();
 if (!$note) { die("Note not found"); }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Note</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light d-flex align-items-center justify-content-center vh-100">
-    <div class="card shadow p-4" style="max-width: 600px; width: 100%;">
-        <h1 class="h4 mb-4">Edit Note</h1>
+<?php if (!empty($error)): ?>
+    <div class="alert alert-danger"><?= $error ?></div>
+<?php endif; ?>
 
-        <?php if (!empty($error)): ?>
-            <div class="alert alert-danger"><?= $error ?></div>
-        <?php endif; ?>
-
-        <form method="post">
-            <div class="mb-3">
-                <label class="form-label">Title</label>
-                <input 
-                    type="text" 
-                    name="title" 
-                    value="<?= htmlspecialchars($note['title']) ?>" 
-                    required 
-                    class="form-control"
-                >
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Content</label>
-                <textarea 
-                    name="content" 
-                    rows="5" 
-                    required 
-                    class="form-control"
-                ><?= htmlspecialchars($note['content']) ?></textarea>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center">
-                <button type="submit" class="btn btn-primary">Update</button>
-                <a href="index.php" class="btn btn-link">Back</a>
-            </div>
-        </form>
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input 
+            type="text" 
+            name="title" 
+            value="<?= htmlspecialchars($note['title']) ?>" 
+            required 
+            class="form-control"
+        >
     </div>
-</body>
-</html>
+
+    <div class="mb-3">
+        <label class="form-label">Content</label>
+        <textarea 
+            name="content" 
+            rows="5" 
+            required 
+            class="form-control"
+        ><?= htmlspecialchars($note['content']) ?></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>
