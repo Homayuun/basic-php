@@ -5,7 +5,7 @@ include 'install.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
-    $password = $_POST['password'];
+    $password = trim($_POST['password']);
 
     $sql = "SELECT * FROM UsersTable WHERE username = ?";
     $stmt = $connection->prepare($sql);
