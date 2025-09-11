@@ -36,8 +36,8 @@ function buildPagination(totalPages, page) {
 
     for (let i = 1; i <= totalPages; i++) {
         if (
-            i === 1 || 
-            i === totalPages || 
+            i === 1 ||
+            i === totalPages ||
             (i >= page - delta && i <= page + delta)
         ) {
             range.push(i);
@@ -95,8 +95,51 @@ async function deleteNote(id) {
     }
 }
 
-function openEdit(id) {
-    openForm("edit.php?id=" + id, "Edit Note");
+async function openEdit(id) {
+    try {
+        const html = await fetchForm("edit.php?id=" + id);
+        const modalEl = document.getElementById("noteModal");
+        modalEl.querySelector(".modal-title").textContent = "Edit Note";
+        modalEl.querySelector(".modal-body").innerHTML = html;
+
+        const form = modalEl.querySelector("form");
+
+        const res = await fetch(`index_ajax.php?action=edit&id=${id}`);
+        const data = await res.json();
+
+        if (!data.success || !data.note) {
+            modalEl.querySelector(".modal-body").insertAdjacentHTML(
+                "afterbegin",
+                `<div class="alert alert-danger">Failed to load note</div>`
+            );
+            return;
+        }
+
+        form.title.value = data.note.title;
+        form.content.value = data.note.content;
+
+        const modal = new bootstrap.Modal(modalEl);
+        modal.show();
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            const response = await submitForm(`index_ajax.php?action=edit&id=${id}`, formData);
+
+            if (response.trim().toLowerCase() === "ok") {
+                modal.hide();
+                loadNotes(currentPage);
+            } else {
+                modalEl.querySelector(".modal-body").insertAdjacentHTML(
+                    "afterbegin",
+                    `<div class="alert alert-danger">${response}</div>`
+                );
+            }
+        }, { once: true });
+    } catch (err) {
+        alert("Error loading edit form");
+    }
 }
 
 document.getElementById("addBtn").addEventListener("click", () => {
@@ -114,7 +157,7 @@ async function openForm(url, title) {
         modal.show();
 
         const form = modalEl.querySelector("form");
-        form.addEventListener("submit", async function(e) {
+        form.addEventListener("submit", async function (e) {
             e.preventDefault();
             const formData = new FormData(form);
 

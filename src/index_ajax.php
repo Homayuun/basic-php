@@ -85,6 +85,48 @@ switch ($action) {
         exit;
         break;
 
+    case 'edit':
+        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        if ($id <= 0) {
+            echo "Invalid ID";
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title   = trim($_POST['title'] ?? '');
+            $content = trim($_POST['content'] ?? '');
+
+            if (!empty($title) && !empty($content)) {
+                $updateSQL = "UPDATE NotesTable SET title = ?, content = ? WHERE id = ? AND user_id = ?";
+                $stmt = $connection->prepare($updateSQL);
+                $stmt->bind_param("ssii", $title, $content, $id, $userId);
+
+                if ($stmt->execute()) {
+                    exit("OK");
+                } else {
+                    exit("Error updating: " . $connection->error);
+                }
+            } else {
+                echo "Title and content are required.";
+                exit;
+            }
+        }
+
+        $selectSQL = "SELECT * FROM NotesTable WHERE id = ? AND user_id = ?";
+        $stmt = $connection->prepare($selectSQL);
+        $stmt->bind_param("ii", $id, $userId);
+        $stmt->execute();
+        $note = $stmt->get_result()->fetch_assoc();
+
+        if (!$note) {
+            echo "Note not found";
+            exit;
+        }
+
+        echo json_encode(['success' => true, 'note' => $note]);
+        exit;
+        break;
+
     default:
         echo json_encode(['success' => false, 'message' => 'Invalid action']);
         exit;
