@@ -58,10 +58,17 @@ switch ($action) {
     case 'create':
         $title = $_POST['title'] ?? '';
         $content = $_POST['content'] ?? '';
-        $stmt = $connection->prepare("INSERT INTO NotesTable (title, content, user_id) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssi", $title, $content, $userId);
-        $ok = $stmt->execute();
-        echo json_encode(['success' => (bool)$ok]);
+        if ($title && $content) {
+            $stmt = $connection->prepare("INSERT INTO NotesTable (title, content, user_id) VALUES (?, ?, ?)");
+            $stmt->bind_param("ssi", $title, $content, $userId);
+            if ($stmt->execute()) {
+                exit("OK");
+            } else {
+                echo "Error: " . $connection->error;
+            }
+        } else {
+            echo "Title and content are required.";
+        }
         exit;
         break;
 

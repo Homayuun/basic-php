@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("ssi", $title, $content, $id);
 
         if ($stmt->execute()) {
-            exit("OK"); // tell AJAX it's done
+            exit("OK");
         } else {
             die("Error updating: " . $connection->error);
         }

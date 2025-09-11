@@ -74,29 +74,31 @@ document.getElementById("addBtn").addEventListener("click", () => {
 
 async function openForm(url, title) {
     try {
-        let html = await fetchForm(url);
-        document.querySelector("#noteModal .modal-title").textContent = title;
-        document.querySelector("#noteModal .modal-body").innerHTML = html;
+        const html = await fetchForm(url);
+        const modalEl = document.getElementById("noteModal");
+        modalEl.querySelector(".modal-title").textContent = title;
+        modalEl.querySelector(".modal-body").innerHTML = html;
 
-        let modal = new bootstrap.Modal(document.getElementById("noteModal"));
+        const modal = new bootstrap.Modal(modalEl);
         modal.show();
 
-        let form = document.querySelector("#noteModal form");
+        const form = modalEl.querySelector("form");
         form.addEventListener("submit", async function(e) {
             e.preventDefault();
-            let formData = new FormData(form);
-            let response = await submitForm(url, formData);
+            const formData = new FormData(form);
+
+            const response = await submitForm("index_ajax.php?action=create", formData);
 
             if (response.trim().toLowerCase() === "ok") {
                 modal.hide();
                 loadNotes(currentPage);
             } else {
-                document.querySelector("#noteModal .modal-body").innerHTML = response;
+                modalEl.querySelector(".modal-body").innerHTML = response;
             }
-        });
+        }, { once: true });
+
     } catch {
         alert("Error loading form");
     }
 }
-
 loadNotes(1);
