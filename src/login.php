@@ -1,35 +1,3 @@
-<?php
-session_start();
-include 'connect.php';
-include 'install.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
-
-    $sql = "SELECT * FROM UsersTable WHERE username = ?";
-    $stmt = $connection->prepare($sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result && $result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-
-        if ($password === $user['password']) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            header("Location: index.php");
-            exit;
-        } else {
-            $error = "Incorrect password.";
-        }
-    } else {
-        $error = "User not found.";
-    }
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,11 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
         <h1 class="h4 text-center mb-4">Login</h1>
 
-        <?php if (!empty($error)): ?>
-            <div class="alert alert-danger"><?= $error ?></div>
-        <?php endif; ?>
+        <div id="loginError" class="alert alert-danger d-none"></div>
 
-        <form method="post">
+        <form id="loginForm">
             <div class="mb-3">
                 <label class="form-label">Username</label>
                 <input type="text" name="username" required class="form-control">
@@ -59,5 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="btn btn-primary w-100">Login</button>
         </form>
     </div>
+
+    <script src="login.js"></script>
 </body>
 </html>
