@@ -29,17 +29,48 @@ function buildPagination(totalPages, page) {
     let pagination = document.getElementById("pagination");
     pagination.innerHTML = "";
 
-    if (page > 1) {
-        pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="loadNotes(${page-1})">Prev</a></li>`;
-    }
+    const delta = 2;
+    let range = [];
+    let rangeWithDots = [];
+    let l;
 
     for (let i = 1; i <= totalPages; i++) {
-        let active = (i === page) ? "active" : "";
-        pagination.innerHTML += `<li class="page-item ${active}"><a class="page-link" href="#" onclick="loadNotes(${i})">${i}</a></li>`;
+        if (
+            i === 1 || 
+            i === totalPages || 
+            (i >= page - delta && i <= page + delta)
+        ) {
+            range.push(i);
+        }
+    }
+
+    for (let i of range) {
+        if (l) {
+            if (i - l === 2) {
+                rangeWithDots.push(l + 1);
+            } else if (i - l !== 1) {
+                rangeWithDots.push("...");
+            }
+        }
+        rangeWithDots.push(i);
+        l = i;
+    }
+
+    if (page > 1) {
+        pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="loadNotes(${page - 1})">Prev</a></li>`;
+    }
+
+    for (let i of rangeWithDots) {
+        if (i === "...") {
+            pagination.innerHTML += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        } else {
+            let active = (i === page) ? "active" : "";
+            pagination.innerHTML += `<li class="page-item ${active}"><a class="page-link" href="#" onclick="loadNotes(${i})">${i}</a></li>`;
+        }
     }
 
     if (page < totalPages) {
-        pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="loadNotes(${page+1})">Next</a></li>`;
+        pagination.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="loadNotes(${page + 1})">Next</a></li>`;
     }
 }
 
